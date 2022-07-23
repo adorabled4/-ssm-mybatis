@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.dhx_.mapper.EmpMapper" >   <!--对应 相应的接口-->
+
+<!--
+    mapper 接口和映射文件一致
+    1.mapper接口的全类名要和mapper保持一致
+    2.接口中的方法名要和标签中的id 保持一致
+-->
+<!-- int   insertUser()   方法名要和id 一致-->
+
+<!--    <update id="updateUser">-->
+<!--        update t_user set username='root_update'   where id=2;-->
+<!--    </update>-->
+<!--    <delete id="deleteUser">-->
+<!--        delete from t_user where username='admin';-->
+<!--    </delete>-->
+
+    <select id="getUserById" resultType="pers.dhx_.pojo.User" >
+        select *from t_user where id=3;
+    </select>
+    <select id="getAllUser" resultType="User" >
+        select *from t_user ;
+    </select>
+
+    <select id="checkLogin" resultType="User">
+     <!--   select *from t_user where username='${username}' and password='${pwd}' ;-->
+        select *from t_user where username=#{arg0} and password=#{arg1} ;
+    </select>
+    <!--  这两个属性只能设置一个
+        resultType表示查询结果返回的类型    注意要写全类名
+      resultMap：自定义映射， 处理一对一或一对多的映射关系-->
+    <select id="checkLoginByMap" resultType="User">
+        <!--   select *from t_user where username='${username}' and password='${pwd}' ;-->
+        select *from t_user where username= #{username} and password=#{password} ;
+    </select>
+
+    <insert id="insertUser">
+        insert into t_user values(null,#{username},#{password},#{age},#{gender},#{email});
+    </insert>
+
+
+<!--    User checkLoginByParam(@Param("username") String username, @Param("password")String password);-->
+        <select id="checkLoginByParam" resultType="User">
+            select *from t_user where username=#{username} and password=#{password};
+        </select>
+</mapper>

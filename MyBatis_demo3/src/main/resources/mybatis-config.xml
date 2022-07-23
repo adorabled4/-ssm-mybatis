@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <properties resource="jdbc.properties"/>
+    <!--引入properties 文件 ,就可以在当前文件中使用 mybatis-config 访问properties 中的value-->
+    
+    <settings> <!--可以自动将下划线映射为驼峰-->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="lazyLoadingEnabled" value="true"/><!--开启延迟加载-->
+        <setting name="aggressiveLazyLoading" value="false"/> <!--按需加载-->
+    </settings>
+
+    
+    <typeAliases>  <!--起别名 默认的别名就是类名，并且不区分大小写-->
+<!--        <typeAlias type="pers.dhx_.pojo." alias=""/>-->
+        <package name="pers.dhx_.mapper"/>
+        <package name="pers.dhx_.pojo"/>
+        <!--通过包来设置类型别名，指定包下所有的类型都会拥有默认的别名，并且不区分大小写 :默认的别名就是类名-->
+    </typeAliases>
+
+    <!--设置连接数据库的环境-->
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+
+    <!--引入映射文件-->
+    <mappers>
+        <!--如果使用package，记得保持目录一致-->
+        <package name="pers.dhx_.mapper"/>
+    </mappers>
+</configuration>
+
+
+           

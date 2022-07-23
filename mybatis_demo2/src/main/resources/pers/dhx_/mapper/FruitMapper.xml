@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.dhx_.mapper.FruitMapper">
+
+    <select id="getAllFruit" resultType="Fruit">
+        select *from fruitdb.t_fruit;
+    </select>
+
+
+<!--    public Fruit getFruitById(Integer fid);-->
+    <select id="getFruitById" resultType="Fruit">
+<!-- #{}相当于占位符  ，结合 sql.excute(select *from emp where userId= ?,userId); , #{ } 里面的名字随便写， 但是注意命名规范-->
+        select *from fruitdb.t_fruit where fid=${fid};
+    </select>
+<!--        public Fruit getFruitByFname(String fname);-->
+    <select id="getFruitByFname" resultType="Fruit">
+        select *from fruitdb.t_fruit where fname='${fname}';
+    </select>
+
+
+</mapper>

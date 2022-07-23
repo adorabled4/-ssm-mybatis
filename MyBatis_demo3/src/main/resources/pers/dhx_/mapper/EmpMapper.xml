@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.dhx_.mapper.EmpMapper">
+<!--
+    字段名和属性名不一致的情况，如何处理映射关系
+    1，为查询的字段设置别名，和属性名保持一致
+    2、当字段符合MysQL的要求使用_，而属性符合java的要求使用驼峰
+此时可以在MyBatis的核心配置文件中设置一个全局配置，可以自动将下划线映射为驼峰emp_id :empId , emp_name : empName
+    3，使用resultMap自定义映射处理处理多对一的映射关系:
+        1、级联方式处理
+        2.association
+        3、:star:分步查询
+
+    4、处理一对多的映射关系
+        1.collection :处理一对多的映射关系，（处理集合类型的属性 ）
+        2.分布查询
+-->
+
+    <resultMap id="empResultMap" type="Emp">
+<!--        使用resultMap 自定义映射-->
+        <id column="emp_id" property="empId"/>
+        <result column="emp_name" property="empName"/>
+        <result column="age" property="age"/>
+        <result column="gender" property="gender"/>
+    </resultMap>
+    
+    <resultMap id="empAndDeptResultMap1" type="Emp">
+        <!--        使用resultMap 自定义映射-->
+        <id column="emp_id" property="empId"/>
+        <result column="emp_name" property="empName"/>
+        <result column="age" property="age"/>
+        <result column="gender" property="gender"/>
+        <result column="dept_id" property="dept.deptId"/>
+        <result column="dept_name" property="dept.deptName"/>
+    </resultMap>
+    <resultMap id="empAndDeptResultMap2" type="Emp">
+        <id column="emp_id" property="empId"/>
+        <result column="emp_name" property="empName"/>
+        <result column="age" property="age"/>
+        <result column="gender" property="gender"/>
+        <result column="dept_id" property="deptId"/>
+        <!-- association ：处理一对多的映射关系，（处理实体类类型的属性）
+            property ：设置需要处理映射关系的属性名（表里面的字段）
+            javaType ：设置需要处理的属性的类型   （实体类的属性名）
+        -->
+        <association property="dept" javaType="Dept">
+            <id column="dept_id" property="deptId"/>
+            <id column="dept_name" property="deptName"/>
+        </association>
+    </resultMap>
+    
+    <insert id="insertEmp" >
+        insert into  t_emp values(null,#{empName},#{age},#{gender},${deptId});
+    </insert>
+
+    <insert id="insertEmp1" >
+        insert into  t_emp values(null,#{empName},#{age},#{gender},${deptId});
+    </insert>
+
+    <select id="getEmpById" resultType="Emp">
+        select *from ssm.t_emp where emp_id = #{empId};
+    </select>
+
+    <select id="getEmpAndDeptByEmpId" resultMap="empAndDeptResultMap">
+        select te.*,td.* from t_emp te
+              left join t_dept td
+            on te.dept_id = td.dept_id
+        where te.emp_id=#{empId};
+    </select>
+
+
+    <resultMap id="empAndDeptResultMap" type="Emp">
+        <id column="emp_id" property="empId"/>
+        <result column="emp_name" property="empName"/>
+        <result column="age" property="age"/>
+        <result column="gender" property="gender"/>
+        <result column="dept_id" property="deptId"/>
+        <!--设定分布查询为 立即加载 或者 延迟加载 fetchType ="eager" or "lazy"-->
+        <association property="dept" fetchType="eager"
+                     select="pers.dhx_.mapper.DeptMapper.getEmpAndDeptStepTwo"
+                     column="dept_id"/>
+<!--        把当前SQL的某一个字段当做下一个SQL查询的条件
+        property : 设置需要处理映射关系的属性的属性名
+        select:设置分布查询的sql的唯一标识
+        column：将查询出的某个字段 作为 分布查询的sql 的条件 （这里就是dept_id）
+ -->
+    </resultMap>
+<!--    Emp getEmpAndDeptByStepOne(@Param("empId")Integer empId);-->
+    <select id="getEmpAndDeptByStepOne" resultMap="empAndDeptResultMap">
+        select *from t_emp where emp_id=#{empId};
+    </select>
+
+<!--  通过deptId 查询部门以及 人员  List<Emp> getDeptAndEmpByStepTwo(@Param("deptId")Integer deptId);-->
+    <select id="getDeptAndEmpByStepTwo" resultType="Emp">
+        select * from t_emp where dept_id =#{deptId};
+    </select>
+</mapper>
